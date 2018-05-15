@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    LonedayAdmin| 认证管理
+{% endblock%}
+{% block extend_css %}
+	<style type="text/css">
+		.useredit {
+				height:25px;
+				width:120px;
+				background-color:#EEE8AA;
+				padding:5px;
+			}
+	</style>
+{% endblock %}
+{% block page-content %}
+  <div class="row wrapper border-bottom white-bg page-heading">
+   <div class="col-lg-10">
+     <h2>用户列表</h2>
+      <ol class="breadcrumb">
+        <li>
+         <a href="{% url "index" %}">主页</a>
+        </li>
+        <li>
+         <a>认证管理</a>
+        </li>
+        <li class="active">
+          <strong>用户列表</strong>
+        </li>
+       </ol>
+     </div>
+    <div class="col-lg-2" id="split-left">
+
+    </div>
+   </div>
+
+{% include "htmlTools/ajaxModel.html" %}
+<!-- Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
+ <div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+       <h4 class="modal-title" id="addUserModalLabel">添加用户</h4>
+    </div>
+	  <div class="modal-body">
+			<form action="/auths/index/" method="post">
+				{% csrf_token %}
+				<div class="row">
+					<div class="col-md-8 col-sm-6 col-xs-12">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+							{{ addUserForm.email }}
+						</div>	
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-md-8 col-sm-6 col-xs-12">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-user"></i></span>
+							{{ addUserForm.chinese }}
+						</div>	
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-md-8 col-sm-6 col-xs-12">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-mobile-phone"></i></span>
+							{{ addUserForm.phonenumber }}
+						</div>	
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			  <button type="submit" id="btnAddUser" class="btn btn-primary">添加</button>
+		 </div>
+	 </form>
+   </div>
+  </div>
+</div>
+<!--end modal-->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4 col-sm-6 col-xs-12">
+			<div class="small-box bg-yellow">
+				<div class="inner">
+					<h3>{{ data.aduitusersinfo.total }}</h3>
+					<p>用户总数</p>
+				</div>
+				<div class="icon">
+					<i class="ion ion-person-add"></i>
+				</div>
+				<a href="#" id="addUser" class="small-box-footer" data-toggle="modal" data-target="#addUserModal">
+					添加用户 <i class="fa fa-arrow-circle-right"></i>
+				</a>
+			</div>
+		</div>
+		<div class="col-md-4 col-sm-6 col-xs-12">
+			<div class="small-box bg-red">
+				<div class="inner">
+					<h3>{{ data.aduithostscount }}</h3>
+					<p>主机总数</p>
+				</div>
+				<div class="icon">
+					<i class="ion ion-pie-graph"></i>
+				</div>
+				<a href="#" class="small-box-footer">
+					More info <i class="fa fa-arrow-circle-right"></i>
+				</a>
+			</div>
+		</div>
+		<div class="col-md-4 col-sm-6 col-xs-12">
+			<div class="small-box bg-aqua">
+				<div class="inner">
+					<h3>{{ data.aduitroles|length}}</h3>
+					<p>角色总数</p>
+				</div>
+				<div class="icon">
+					<i class="fa fa-user"></i>
+				</div>
+				<a href="#" class="small-box-footer">
+					More info <i class="fa fa-arrow-circle-right"></i>
+				</a>
+			</div>
+		</div>
+
+	</div>
+	<div class="row">
+		<div class="box">
+			<div class="col-xs-9 col-md-12">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>登陆账号</th>
+							<th>邮箱</th>
+							<th>中文名</th>
+							<th>手机</th>
+							<th>机器数量</th>
+							<th>是/否登录</th>
+							<th>授权操作</th>
+						</tr>
+					</thead>
+					<tbody "id"="aduituser_table">
+					{% if status %}
+						{% for user in data.aduitusersinfo.users %}
+							<tr>
+								<th user_id = "{{ user.id }}" userinfo="username">{{ forloop.counter }}.{{ user.username }}</th>
+								<td userinfo="emial">{{ user.email }}</td>
+								<td userinfo="chinese">{{ user.chinese }}</td>
+								<td userinfo="phonenumber">{{ user.phonenumber }}</td>
+								<td userinfo="hostcount">{{ user.hostcount }}</td>
+								<td userinfo="confirmed">{{ user.confirmed }}</td>
+								<td>
+									<a href="{% url 'authorizeUser' user.id %}">
+										<button type="button" btn_action="authuser" class="btn btn-warning btn-sm">
+											授权
+										</button>
+									</a>
+									<button type="button" btn_action="edituser" class="btn btn-primary btn-sm">编辑</button>
+									<button type="button" btn_action="deleteuser" class="btn btn-danger btn-sm">删除</button>
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<h1>认证系统连接失败，请联系管理员</h1>
+					{% endif %}
+					</tbody>
+				</table>
+			</div>		
+		</div>
+	 <div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+		<ul class="pagination">
+			<li {% if not data.aduitusersinfo.prev %} class="paginate_button previous disabled"{% else %} class="paginate_button previous" {% endif %} id="example2_previous">
+			<a href="{% if not data.aduitusersinfo.prev %}#{% else %}{% url "auths_index" %}?page={{ data.aduitusersinfo.prev }}{% endif %}" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+			</li>
+			{% for p in data.aduitusersinfo.page_iter %}
+				{% if p == data.aduitusersinfo.current %}
+					<li class="paginate_button active">
+				{% else %}
+					<li class="paginate_button">
+				{% endif %}
+						<a href="{% url "auths_index" %}?page={{ p }}" aria-controls="example2" data-dt-idx="1" tabindex="0">{{ p }}</a>
+					</li>
+			{% endfor %}
+			<li {% if not data.aduitusersinfo.next %} class="paginate_button next disabled" {% else %} class="paginate_button next" {% endif %} id="example2_next">
+				<a href="{% if not data.aduitusersinfo.next %}#{% else %}{% url "auths_index" %}?page={{ data.aduitusersinfo.next }}{% endif %}" aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+			</li>																																																												
+		</ul>
+	</div>
+	</div>
+</div>
+{% endblock %}
+{% block footer-js %}
+<script src="{% static "plugins/jquery-cookie/jquery-cookie.js" %}"></script>
+<script src="{% static "extend_js/auths_index.js" %}"></script>
+{% endblock%}

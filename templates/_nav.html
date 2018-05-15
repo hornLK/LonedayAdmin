@@ -1,0 +1,93 @@
+<nav class="navbar-default navbar-static-side  " role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="clear"> <span class="block m-t-xs"> <strong
+                                    class="font-bold">{{ user.nickname }}</strong>
+
+                             </span> <span class="text-muted text-xs block">
+                                {% ifequal  user.is_superuser  1 %}
+                                    管理员 {% else %} 普通用户 {% endifequal %}
+                                <b class="caret"></b></span> </span>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                        <li><a href="#">修改密码</a></li>
+												<li><a href="{% url "logout" %}">登出</a></li>
+                    </ul>
+                </div>
+                <div class="logo-element">
+                </div>
+            </li>
+            <li>
+						<a href="{% url "index" %}"><i class="fa fa-th-list"></i> <span class="nav-label">首页</span>
+                </a>
+
+            </li>
+						<!--
+            <li class="{{ asset_active }}">
+                <a href="#"><i class="fa fa-inbox"></i> <span class="nav-label">资产管理</span>
+                    <span class="fa arrow"> </span></a>
+                <ul class="nav nav-second-level">
+                    <li class="{{ asset_list_active }}"><a href="#">资产信息</a></li>
+                    <li class="{{ asset_user_list_active }}"><a href="#">登录用户</a>
+                    </li>
+                    <li class="{{ asset_import_active }}"><a href="#">资产导入</a></li>
+
+
+                </ul>
+            </li>
+						-->
+						<!--
+            <li class="{{ tasks_active }}">
+                <a href="#"><i class="fa  fa-coffee"></i> <span class="nav-label">作业中心</span>
+                    <span class="fa arrow"> </span></a>
+                <ul class="nav nav-second-level">
+                    <li class="{{ tasks_cmd_active }}"><a href="#">命令行</a></li>
+                    <li class="{{ tools_active }}"><a href="#">工具</a></li>
+                    <li class="{{ vars_active }}"><a href="#">变量</a></li>
+                    <li class="{{ tools_exec_active }}"><a href="#">创建任务</a></li>
+                    <li class="{{ tools_results_active }}"><a href="#">任务结果</a></li>
+                </ul>
+						</li>
+						-->
+						{% ifequal user.is_superuser 1 %}
+						<!--
+						<li class="{{ index_active }}">
+                <a href="#"><i class="fa fa-users"></i> <span class="nav-label">账户管理</span>
+                    <span class="fa arrow"> </span></a>
+                <ul class="nav nav-second-level">
+									<li class="{{ index_login_active }}"><a href="{% url "user_list" %}">用户管理</a></li>
+										<li class="{{ index_login_active }}"><a href="{% url "role_list" %}">角色管理</a></li>
+										<li class="{{ index_login_active }}"><a href="{% url "permission_list" %}">权限管理</a></li>
+                </ul>
+						</li>
+						-->
+						{% endifequal %}
+
+						{% ifequal user.is_superuser 1 %}
+						<li class="{{ index_active }}">
+                <a href="#"><i class="fa fa-users"></i> <span class="nav-label">认证管理</span>
+                    <span class="fa arrow"> </span></a>
+                <ul class="nav nav-second-level">
+									<li class="{{ index_login_active }}"><a href="{% url "auths_userdetail" %}">登录信息</a></li>
+										<li class="{{ index_login_active }}"><a href="{% url "auths_index" %}">认证用户管理</a></li>
+                </ul>
+						</li>
+						{% endifequal %}
+
+						{% ifequal user.is_superuser 1 %}
+            <li class="{{ index_active }}">
+                <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">后台</span>
+                    <span class="fa arrow"> </span></a>
+                <ul class="nav nav-second-level">
+                    <li class="{{ index_login_active }}"><a href="#">登录历史</a></li>
+                                        <li><a href="/admin" target="_blank">管理界面</a></li>
+                </ul>
+            </li>
+						{% endifequal %}
+        </ul>
+
+    </div>
+</nav>

@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    添加主机权限
+{% endblock%}
+{% block extend_css %}
+  <style type="text/css">
+    .host_table_checkbox {
+			position: absolute;
+		 	top: 0%;
+			left: 0%;
+		 	display: block;
+		 	width: 100%;
+		 	height: 100%;
+		 	margin: 0px;
+		 	padding: 0px;
+		 	background: rgb(255, 255, 255) none repeat scroll 0% 0%;
+		 	border: 0px none;
+		 	opacity: 0;
+		}
+		.host-table {
+			min-height:450px
+		}
+
+		.a-pointer {
+			cursor:pointer;
+		}
+		.tr-disabled {
+			background-color: #00CED1;
+			color: #F8F8FF
+		}
+	</style>
+{% endblock %}
+
+{% block page-content%}
+    <div class="row wrapper border-bottom gray-bg page-heading">
+        <div class="col-lg-10">
+            <h3>用户：{{ data.user_info.username  }}</h3>
+            <ol class="breadcrumb gray-bg">
+                <li>
+                    <a href="{% url "index" %}">主页</a>
+                </li>
+                <li>
+                    <a href="{% url "auths_index" %}">认证管理管理</a>
+                </li>
+                <li class="active">
+                    <strong>授权主机</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <br>
+
+      <ol class="breadcrumb" style="display:none">
+				<li id="user_tag" user_id={{ data.user_info.id }}><a href="{% url 'authorizeUser' data.user_info.id %}"><i class="fa fa-dashboard"></i>{{ data.user_info.username }}界面</a></li>
+        <li class="active">添加主机</li>
+      </ol>
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="addModalLabel">添加主机</h4>
+      </div>
+      <div class="modal-body">
+        <div class="box-body hostbox-messages">
+					<table id="addmodel_table" class="table table-bordered">
+						<thead>
+							<tr>
+								<th style="width: 10px">
+									#
+								</th>
+								<th>主机名</th>
+								<th>主机IP</th>
+								<th>主机组</th>
+							</tr>
+						</thead>
+						<tbody id="model_hosts">
+						</tbody>
+						</table>
+						<div class="box-footer clearfix">
+							<select id="select_role" ">
+								{% for role in data.role_info %}
+									<option role_id="{{ role.role_id }}">{{ role.role_name }}</option>
+								{% endfor%}
+							</select>
+						</div>
+					</div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button id="model_auth" type="button" class="btn btn-primary">授权</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--end Modal-->
+
+	<div class="container-fluid">
+		<div class="col-md-7 col-lg-7">
+			<div class="row">
+					<div class="col-md-4">
+						<a id="addHostBtn" class="btn btn-block btn-social btn-foursquare" data-toggle="modal" data-target="#addModal">
+							<i class="fa fa-plus-square"></i> 添加选中主机
+						</a>
+					</div>
+					<div class="col-md-4">
+						<a href="{% url 'authorizeUser' data.user_info.id %}" class="btn btn-block btn-social btn-warning" >
+							<i class="fa fa-reply"></i> 返回用户界面
+						</a>
+					</div>
+
+			</div>
+			<div class="box">
+			  <div class="box-header with-border">
+				    <h3 class="box-title">可添加主机表</h3>
+			  </div>
+					  <!-- /.box-header -->
+			  <div class="box-body hostbox-messages host-table">
+			    <table id="add_table" class="table table-bordered">
+					<thead>
+						<tr>
+			        <th style="width:10px">
+								<button type="button" class="btn btn-default btn-sm checkbox-toggle">
+									<i class="fa fa-square-o"></i>
+								</button>	
+							</th>
+			        <th>主机名</th>
+			        <th>主机IP</th>
+							<th>主机组</th>
+			      </tr>
+			     </thead>
+			     <tbody id="outhosts">
+						{% for host in data.hosts_info.hosts %}
+						<tr host_id={{ host.id }}>
+							<td style="width:10px">
+								<input type="checkbox" />
+							</td>
+							<td>{{ host.hostName }}</td>
+					    <td>
+								{{ host.hostIP }}
+			        </td>
+							<td>{{ host.hostGroup }}</td>
+			      </tr>
+						{% endfor %}
+			    </tbody>
+			   </table>
+				</div>
+			  <!-- /.box-body -->
+			  <div class="box-footer clearfix">
+				<!--分页-->
+					    <div class="dataTables_paginate paging_simple_numbers" id="outhosts_paginate">
+								<ul class="pagination">
+									<li {% if not data.hosts_info.perv %} class="paginate_button previous disabled"{% else %} class="paginate_button previous" {% endif %} id="outhosts_previous">
+									<a ajax_href="{% if not data.hosts_info.perv %}null{% else %}{% url "auths_userouthosts" data.user_info.id %}?page={{ data.hosts_info.perv }}{% endif %}" class="a-pointer" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+									</li>
+									{% for p in data.hosts_info.page_iter %}
+										{% if p == data.hosts_info.current %}
+											<li class="paginate_button active">
+										{% else %}
+											<li class="paginate_button">
+										{% endif %}
+										<a ajax_href="{% url "auths_userouthosts" data.user_info.id %}?page={{ p }}" a_tag="true" class="a-pointer" >{{ p }}</a>
+											</li>
+									{% endfor %}
+											<li {% if not data.hosts_info.next %} class="paginate_button next disabled" {% else %} class="paginate_button next" {% endif %} id="outhosts_next">
+											<a ajax_href="{% if not data.hosts_info.next%}null{% else %}{% url "auths_userouthosts" data.user_info.id %}?page={{ data.hosts_info.next }}{% endif %}" class="a-pointer" aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+											</li>
+								</ul>
+							</div>
+			  </div>
+			</div>					
+	</div>
+	<div class="col-md-5">
+		<div class="row">
+					<div class="col-md-4">
+						<a id="confirmAuth" class="btn btn-block btn-social btn-dropbox">
+							<i class="fa fa-eject"></i>确认授权 
+						</a>
+					</div>
+					<div class="col-md-4">
+						<a id="deleteOption" class="btn btn-block btn-social btn-github">
+							<i class="fa fa-dropbox"></i>删除添加
+						</a>
+					</div>
+
+			</div>
+
+		<div class="box">
+		  <div class="box-header">
+		    <h3 class="box-title">添加确认表</h3>
+		  </div>
+		  <!-- /.box-header -->
+		  <div class="box-body no-padding host-table" style="overflow:scroll;">
+		    <table id="auth_table" class="table table-striped">
+		      <thead>
+						<tr>
+			        <th style="width: 10px">
+								<button type="button" class="btn btn-default btn-sm checkbox-toggle">
+									<i class="fa fa-square-o"></i>
+								</button>
+							</th>
+			        <th>主机名</th>
+			        <th>主机IP</th>
+			        <th>角色</th>
+			      </tr>
+					</thead>
+		      <tbody id="add_auth_table">
+			    </tbody>
+			   </table>
+		   </div>
+	   <!-- /.box-body -->
+		 </div>
+		</div>
+
+	</div>
+{% endblock%}
+{% block footer-js %}
+	<script src="{% static "extend_js/auths_authorizeadd_user_role.js" %}"></script>
+{% endblock %}

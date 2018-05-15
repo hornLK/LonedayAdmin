@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    用户主机权限管理
+{% endblock%}
+{% block page-content %}
+      <h1>
+	用户：{{ data.user_info.username }}
+      </h1>
+      <ol class="breadcrumb" style="display:none">
+				<li><a href="{% url 'auths_index' %}"><i class="fa fa-dashboard"></i>授权管理</a></li>
+				<li id="user_tag" class="active" user_id="{{ data.user_info.id }}">{{ data.user_info.username }}</li>
+      </ol>
+		{% include "htmlTools/ajaxModel.html" %}
+    <!--------------------------
+      | Your Page Content Here |
+      -------------------------->
+		<!-- add role modal -->
+		<div class="modal fade bs-addrole-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+			  <div class="modal-dialog modal-lg" role="document">
+				</div>
+		</div>
+		<!-- end modal-->
+	
+	<div class="container-fluid" >
+		<div class="row">
+			<div class="col-md-2">
+				<a href="{% url 'auths_adduserrole' data.user_info.id %}" class="btn btn-social btn-google">
+					<i id="useraddrole" class="fa fa-user-plus"></i> 添加授权主机
+				</a>
+			</div>
+			<div class="col-md-2">
+				<a href="{% url 'auths_index' %}" class="btn btn-social btn-warning">
+					<i id="useraddrole" class="fa fa-reply"></i> 返回用户列表
+				</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="box">
+								<!-- /.box-header -->
+				<div class="box">
+					<div class="box-header">
+						<h3 class="box-title">用户主机表</h3>
+						<div class="box-tools">
+							<div class="input-group input-group-sm" style="width: 150px;">
+								<!--<input name="table_search" class="form-control pull-right" placeholder="Search" type="text">
+								<div class="input-group-btn">
+									<button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<table id="userHosts" class="table table-bordered table-hover dataTable">
+						<thead>
+							<tr>
+								<th style="width:120px">
+									<button type="button" class="btn btn-default btn-sm checkbox-toggle">
+										<i class="fa fa-square-o"></i>
+									</button>
+									<span>|</span>
+									<button id="del_auth" class="btn btn-danger btn-xs">
+										<i class="fa fa-remove"></i>
+										删除
+									</button>
+								</th>
+								<th>主机名</th>
+								<th>主机IP</th>
+								<th>ssh端口</th>
+								<th>登录角色</th>
+								<th>主机组</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for host in data.user_hosts.hosts %}
+							<tr>
+								<td host_id="{{ host.host.id }}" style="width:100px;"> <center><input type="checkbox" ></center></td>
+								<td>{{ host.host.hostName }}</td>
+								<td>{{ host.host.hostIP }}</td>
+								<td>{{ host.host.hostPort }}</td>
+								<td host_id="{{ host.host.id }}">{{ host.role.role_name }}</td>
+								<td>{{ host.host.hostGroup }}</td>
+								<td>
+									  <button type="button" btn_action="edituserRole" class="btn btn-primary btn-sm">角色变更</button>
+										<button type="button" btn_action="deleteuserRole" class="btn btn-danger btn-sm hide">删除角色</button>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					<div class="box-footer clearfix">
+						<!--分页-->
+						<div class="dataTables_paginate paging_simple_numbers" id="example2_paginate">
+							<ul class="pagination">
+						    <li {% if not data.user_hosts.prev %} class="paginate_button previous disabled"{% else %} class="paginate_button previous" {% endif %} id="example2_previous">
+									<a href="{% if not data.user_hosts.prev %}#{% else %}{% url "authorizeUser" data.user_info.id %}?page={{ data.user_hosts.prev }}{% endif %}" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+								</li>
+								{% for p in data.user_hosts.page_iter %}
+									{% if p == data.user_hosts.current %}
+										<li class="paginate_button active">
+									{% else %}
+										<li class="paginate_button">
+									{% endif %}
+											<a href="{% url "authorizeUser" data.user_info.id %}?page={{ p }}" aria-controls="example2" data-dt-idx="1" tabindex="0">{{ p }}</a>
+										</li>
+								{% endfor %}
+								<li {% if not data.user_hosts.next %} class="paginate_button next disabled" {% else %} class="paginate_button next" {% endif %} id="example2_next">
+									<a href="{% if not data.user_hosts.next %}#{% else %}{% url "authorizeUser" data.user_info.id %}?page={{ data.user_hosts.next }}{% endif %}" aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- /.box-body -->
+			</div>
+	</div>
+{% endblock %}
+{% block footer-js %}
+	<script src="{% static "extend_js/auths_authorizeuser.js" %}"></script>
+{% endblock%}
