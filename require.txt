@@ -1,6 +1,6 @@
 certifi==2018.4.16
 chardet==3.0.4
-Django==2.0.4
+Django==2.2.13
 django-bootstrap3==9.1.0
 django-jet==1.0.7
 google-api-python-client==1.6.7
