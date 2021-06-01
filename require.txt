@@ -16,5 +16,5 @@ rsa==3.4.2
 six==1.11.0
 tencentcloud-sdk-python==3.0.3
 uritemplate==3.0.0
-urllib3==1.22
+urllib3==1.26.5
 uWSGI==2.0.17
